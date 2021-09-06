@@ -1,4 +1,4 @@
-# at_app_updater
+# at_newversion_notification
 
 A new Flutter project.
 
