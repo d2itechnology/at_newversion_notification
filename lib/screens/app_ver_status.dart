@@ -5,12 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:package_info/package_info.dart';
-import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class AppVersionStatus {
   /// The current version of the app.
-  final String localVersion;
+  final String currentVersion;
 
   /// The most recent version of the app in the store.
   final String storeVersion;
@@ -22,49 +22,49 @@ class AppVersionStatus {
   final String? releaseNotes;
 
   AppVersionStatus._({
-    required this.localVersion,
+    required this.currentVersion,
     required this.storeVersion,
     required this.appStoreLink,
     this.releaseNotes,
   });
 
-  bool get canUpdate {
+  bool get canVersionUpdate {
     // assume version strings can be of the form aa.bb.cc
     // this implementation correctly compares local 1.8.0 to store 1.7.4
     try {
-      final localFields = localVersion.split('.');
+      final currentFields = currentVersion.split('.');
       final storeFields = storeVersion.split('.');
-      String localPad = '';
+      String currentPad = '';
       String storePad = '';
       for (int i = 0; i < storeFields.length; i++) {
-        localPad = localPad + localFields[i].padLeft(3, '0');
+        currentPad = currentPad + currentFields[i].padLeft(3, '0');
         storePad = storePad + storeFields[i].padLeft(3, '0');
       }
 
-      if (localPad.compareTo(storePad) < 0)
+      if (currentPad.compareTo(storePad) < 0)
         return true;
       else
         return false;
     } catch (e) {
-      return localVersion.compareTo(storeVersion).isNegative;
+      return currentVersion.compareTo(storeVersion).isNegative;
     }
   }
 }
 
 class AppNewVersion {
-  final String? iOSId;
-  final String? androidId;
+  final String? iOSAppId;
+  final String? androidAppId;
   final String? iOSAppStoreCountry;
 
-  AppNewVersion({this.iOSId, this.androidId, this.iOSAppStoreCountry});
+  AppNewVersion({this.iOSAppId, this.androidAppId, this.iOSAppStoreCountry});
 
   /// This checks the version status, then displays a platform-specific alert
   /// onClick buttons can dismiss the update alert, or go to the app store.
 
-  showAlertIfNecessary({required BuildContext context}) async {
+  showAlertDialogIfRequired({required BuildContext context}) async {
     final AppVersionStatus? versionStatus = await getAppVersionStatus();
-    if (versionStatus != null && versionStatus.canUpdate) {
-      showUpdateDialog(context: context, appVersionStatus: versionStatus);
+    if (versionStatus != null && versionStatus.canVersionUpdate) {
+      showUpdateAlertDialog(context: context, appVersionStatus: versionStatus);
     }
   }
 
@@ -75,16 +75,16 @@ class AppNewVersion {
     } else if (Platform.isIOS) {
       return _getIOSVersion(packageInfo);
     } else {
-      printDebug(
+      printDebugText(
           'The target platform "${Platform.operatingSystem}" is not supported this package');
     }
   }
 
-  void printDebug(String s) {}
+  void printDebugText(String s) {}
 
   /// Android info is fetched by parsing the html of the app store page.
   Future<AppVersionStatus?> _getAndroidVersion(PackageInfo packageInfo) async {
-    final id = androidId ?? packageInfo.packageName;
+    final id = androidAppId ?? packageInfo.packageName;
     final uri =
         Uri.https("play.google.com", "/store/apps/details", {"id": "$id"});
     final response = await http.get(uri);
@@ -110,7 +110,7 @@ class AppNewVersion {
         ?.text;
 
     return AppVersionStatus._(
-      localVersion: packageInfo.version,
+      currentVersion: packageInfo.version,
       storeVersion: storeVersion,
       appStoreLink: uri.toString(),
       releaseNotes: releaseNotes,
@@ -118,7 +118,7 @@ class AppNewVersion {
   }
 
   Future<AppVersionStatus?> _getIOSVersion(PackageInfo packageInfo) async {
-    final id = iOSId ?? packageInfo.packageName;
+    final id = iOSAppId ?? packageInfo.packageName;
     final parameters = {"bundleId": "$id"};
     if (iOSAppStoreCountry != null) {
       parameters.addAll({"country": iOSAppStoreCountry!});
@@ -137,26 +137,26 @@ class AppNewVersion {
       return null;
     }
     return AppVersionStatus._(
-      localVersion: packageInfo.version,
+      currentVersion: packageInfo.version,
       storeVersion: jsonObjData['results'][0]['version'],
       appStoreLink: jsonObjData['results'][0]['trackViewUrl'],
       releaseNotes: jsonObjData['results'][0]['releaseNotes'],
     );
   }
 
-  void showUpdateDialog(
+  void showUpdateAlertDialog(
       {required BuildContext context,
       required AppVersionStatus appVersionStatus,
       String alertTitle = 'Update Available',
       String? alertText,
       String updateBtn = 'Update',
       bool allowDismissible = true,
-      String dismissBtn = 'Maybe Later',
+      String dismissBtn = 'Later',
       VoidCallback? dismissAction}) async {
     final alertTitleWidget = Text(alertTitle);
     final alertTextWidget = Text(
       alertText ??
-          'You can now update this app from ${appVersionStatus.localVersion} to ${appVersionStatus.storeVersion}',
+          'You can now update this app from ${appVersionStatus.currentVersion} to ${appVersionStatus.storeVersion} version',
     );
 
     final updateBtnTxtWidget = Text(updateBtn);
