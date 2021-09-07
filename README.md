@@ -12,7 +12,7 @@ The UI of the alert dialog is simply a card.
 Add new_version as [a dependency in your `pubspec.yaml` file.](https://flutter.io/using-packages/)
 ```
 dependencies:
-  new_version: ^0.0.1
+  at_newversion_notification: ^0.0.1
 ```
 ## Usage
 In main.dart file, first create an instance of the `AppNewVersion` class.
