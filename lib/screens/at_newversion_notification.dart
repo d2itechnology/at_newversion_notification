@@ -49,22 +49,58 @@ class AppVersionStatus {
       return currentVersion.compareTo(storeVersion).isNegative;
     }
   }
+
+  // assume minimum version strings can be of the form aa.bb.cc
+
+  bool isMinVersion(String minVersion) {
+    // this implementation correctly compares minimum version to current version
+    try {
+      final minimumFields = minVersion.split('+')[0].split('.');
+      final currentFields = currentVersion.split('.');
+      String currentPad = '';
+      String minimumPad = '';
+      for (int i = 0; i < currentFields.length; i++) {
+        currentPad = currentPad + currentFields[i].padLeft(3, '0');
+        minimumPad = minimumPad + minimumFields[i].padLeft(3, '0');
+      }
+
+      if (currentPad.compareTo(minimumPad) < 0)
+        return true;
+      else
+        return false;
+    } catch (e) {
+      return currentVersion.compareTo(minVersion).isNegative;
+    }
+  }
 }
 
-class AppNewVersion {
+class AtNewVersionNotification {
   final String? iOSAppId;
   final String? androidAppId;
-  final String? iOSAppStoreCountry;
+  final String? minimumVersion; // pass minimumVersion like aa.bb.cc
 
-  AppNewVersion({this.iOSAppId, this.androidAppId, this.iOSAppStoreCountry});
+  AtNewVersionNotification(
+      {this.iOSAppId, this.androidAppId, this.minimumVersion});
 
   /// This checks the version status, then displays a platform-specific alert
   /// onClick buttons can dismiss the update alert, or go to the app store.
 
-  showAlertDialogIfRequired({required BuildContext context}) async {
+  showAlertDialog({required BuildContext context}) async {
     final AppVersionStatus? versionStatus = await getAppVersionStatus();
-    if (versionStatus != null && versionStatus.canVersionUpdate) {
-      showUpdateAlertDialog(context: context, appVersionStatus: versionStatus);
+
+    if (minimumVersion!.isNotEmpty) {
+      // Check if current version is less than minimum version
+      if (versionStatus != null &&
+          versionStatus.isMinVersion(minimumVersion!)) {
+        showRequiredUpdateAlertDialog(
+            context: context, appVersionStatus: versionStatus);
+      }
+    } else {
+      // Check if current version is less than play store/app store version
+      if (versionStatus != null && versionStatus.canVersionUpdate) {
+        showOptionalUpdateAlertDialog(
+            context: context, appVersionStatus: versionStatus);
+      }
     }
   }
 
@@ -120,9 +156,7 @@ class AppNewVersion {
   Future<AppVersionStatus?> _getIOSVersion(PackageInfo packageInfo) async {
     final id = iOSAppId ?? packageInfo.packageName;
     final parameters = {"bundleId": "$id"};
-    if (iOSAppStoreCountry != null) {
-      parameters.addAll({"country": iOSAppStoreCountry!});
-    }
+
     var uri = Uri.https("itunes.apple.com", "/lookup", parameters);
     final response = await http.get(uri);
     if (response.statusCode != 200) {
@@ -144,7 +178,57 @@ class AppNewVersion {
     );
   }
 
-  void showUpdateAlertDialog(
+  void showRequiredUpdateAlertDialog(
+      {required BuildContext context,
+      required AppVersionStatus appVersionStatus,
+      String alertTitle = 'Update Available',
+      String? alertText,
+      String updateBtn = 'Update',
+      bool allowDismissible = false,
+      VoidCallback? dismissAction}) async {
+    final alertTitleWidget = Text(alertTitle);
+    final alertTextWidget =
+        Text(alertText ?? 'Please Update the app to continue');
+
+    final updateBtnTxtWidget = Text(updateBtn);
+    final updateAction = () {
+      _launchAppStore(appVersionStatus.appStoreLink);
+    };
+
+    List<Widget> actions = [
+      Platform.isAndroid
+          ? TextButton(
+              child: updateBtnTxtWidget,
+              onPressed: updateAction,
+            )
+          : CupertinoDialogAction(
+              child: updateBtnTxtWidget,
+              onPressed: updateAction,
+            ),
+    ];
+
+    showDialog(
+      context: context,
+      barrierDismissible: allowDismissible,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            child: Platform.isAndroid
+                ? AlertDialog(
+                    title: alertTitleWidget,
+                    content: alertTextWidget,
+                    actions: actions,
+                  )
+                : CupertinoAlertDialog(
+                    title: alertTitleWidget,
+                    content: alertTextWidget,
+                    actions: actions,
+                  ),
+            onWillPop: () => Future.value(allowDismissible));
+      },
+    );
+  }
+
+  void showOptionalUpdateAlertDialog(
       {required BuildContext context,
       required AppVersionStatus appVersionStatus,
       String alertTitle = 'Update Available',

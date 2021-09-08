@@ -15,11 +15,16 @@ dependencies:
   at_newversion_notification: ^0.0.1
 ```
 ## Usage
-In main.dart file, first create an instance of the `AppNewVersion` class.
-Then Find your application package name and pass the value in andoidAppId and iOSAppId.
+In main.dart file, first create an instance of the `AtNewVersionNotification` class.
+`final atNewVersionNotific = AtNewVersionNotification();`
 
-For iOS, If your app is only available outside the U.S. App Store, then you should pass a two-letter country code in iOSAppStoreCountry. You can search the country code for a specific country.
+Then Find your application package name and pass the value in andoidAppId, iOSAppId and
+pass `minimum version` in minimumVersion parameter.
 
-You can call the `showAlertDialogIfRequired` method in your Build Context, with the help of this a popup will automatically show based on your platform.
+And calling `showAlertDialog` method with your app. `BuildContext` will check if app is applicable for updates or not. And based on platform the alert dialog will automatically open then user can go to the app store.
+
+`atNewVersionNotific.showAlertDialog(context: context);`
+
+
 
 
