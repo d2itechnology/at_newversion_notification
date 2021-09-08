@@ -21,14 +21,14 @@ dependencies:
 ## Usage
 * In main.dart file, first create an instance of the `AtNewVersionNotification` class in your `initState()` method.
 
-`final AtNewVersionNotification appNewVersionNotific = AtNewVersionNotification();`
+   `final AtNewVersionNotification appNewVersionNotific = AtNewVersionNotification();`
 
 * Then Find your application package name and pass the value in andoidAppId, iOSAppId and
 pass `minimum version` in minimumVersion parameter.
 
 * And calling showAlertDialog method with your app. BuildContext will check if the app is applicable for updates or not. And based on the platform the alert dialog will automatically open then the user can go to the app store.
 
-`atNewVersionNotific.showAlertDialog(context: context);`
+   `atNewVersionNotific.showAlertDialog(context: context);`
 
 ## Example
 ```
