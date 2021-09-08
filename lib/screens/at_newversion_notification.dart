@@ -188,7 +188,7 @@ class AtNewVersionNotification {
       VoidCallback? dismissAction}) async {
     final alertTitleWidget = Text(alertTitle);
     final alertTextWidget =
-        Text(alertText ?? 'Please Update the app to continue');
+        Text(alertText ?? 'Please update the app to continue');
 
     final updateBtnTxtWidget = Text(updateBtn);
     final updateAction = () {
