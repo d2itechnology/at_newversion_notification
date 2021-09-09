@@ -1,7 +1,5 @@
 # at_newversion_notification
 
-A new Flutter project.
-
 * This flutter package will alert app users to update the application.
 * With the help of an alert pop-up, users can easily navigate to the respective stores(App Store or play Store) to update the app.
 
