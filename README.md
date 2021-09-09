@@ -2,8 +2,8 @@
 
 A new Flutter project.
 
-* This flutter package alert the user to update the application into a new updated version.
-* With the help of an alert pop-up, users can easily navigate to the appropriate Play Store or App Store Page.
+* This flutter package will alert app users to update the application.
+* With the help of an alert pop-up, users can easily navigate to the respective stores(App Store or play Store) to update the app.
 
 ## UI
 The UI of the alert dialog is simply a card.
@@ -23,16 +23,14 @@ dependencies:
 
    `final AtNewVersionNotification atNewVersionNotification = AtNewVersionNotification();`
 
-* Find your application package name and pass the value in `andoidAppId`, `iOSAppId`.
+* Pass the application package name in `andoidAppId`, `iOSAppId`.
 
-* And Pass application minimum version value in `minimumVersion` parameter.
+* Pass application minimum version value in `minimumVersion` parameter. This parameter is used to force people to update application, any user having version less than the specified version will be forced to update application
 
 * Call showAlertDialog method-
   `atNewVersionNotification.showAlertDialog(context: context);`
 
-* Application's `BuildContext` class will check if the app can be updated.
-
-* Based on the platform (Android/iOS) the alert dialog will automatically show. And user can redirect to the app store on the `Update` button click.
+* If updated app version is available on stores, application will get a popup on launch of application and an option to Update. On click of update button user will be directed to the respective stores(App store or play store).
 
 ## Example
 ```
