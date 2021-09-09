@@ -10,7 +10,7 @@ The UI of the alert dialog is simply a card.
 
 Screenshots:
 
-<img src="https://raw.githubusercontent.com/d2itechnology/at_newversion_notification/main/screenshots/both.png?token=AUJGZAF442K3FYYPDTXQGY3BHGT5U"/>
+<img src="https://raw.githubusercontent.com/d2itechnology/at_newversion_notification/main/screenshots/both.png?token=AUJGZABAX3TJOUFYSYZY4ATBHGZHW"/>
 
 ## Installation
 Add at_newversion_notification as [a dependency in your `pubspec.yaml` file.](https://flutter.io/using-packages/)
