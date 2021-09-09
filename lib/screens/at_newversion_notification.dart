@@ -80,26 +80,26 @@ class AtNewVersionNotification {
   final String? minimumVersion; // pass minimumVersion like aa.bb.cc
 
   AtNewVersionNotification(
-      {this.iOSAppId, this.androidAppId, this.minimumVersion});
+      {this.iOSAppId, this.androidAppId, required this.minimumVersion});
 
   /// This checks the version status, then displays a platform-specific alert
   /// onClick buttons can dismiss the update alert, or go to the app store.
 
   showAlertDialog({required BuildContext context}) async {
     final AppVersionStatus? versionStatus = await getAppVersionStatus();
-
-    if (minimumVersion!.isNotEmpty) {
+    if (minimumVersion != null) {
       // Check if current version is less than minimum version
-      if (versionStatus != null &&
+      if (minimumVersion!.isNotEmpty &&
+          versionStatus != null &&
           versionStatus.isMinVersion(minimumVersion!)) {
         showRequiredUpdateAlertDialog(
             context: context, appVersionStatus: versionStatus);
-      }
-    } else {
-      // Check if current version is less than play store/app store version
-      if (versionStatus != null && versionStatus.canVersionUpdate) {
-        showOptionalUpdateAlertDialog(
-            context: context, appVersionStatus: versionStatus);
+      } else {
+        // Check if current version is less than play store/app store version
+        if (versionStatus != null && versionStatus.canVersionUpdate) {
+          showOptionalUpdateAlertDialog(
+              context: context, appVersionStatus: versionStatus);
+        }
       }
     }
   }

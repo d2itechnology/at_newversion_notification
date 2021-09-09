@@ -16,7 +16,7 @@ Screenshots:
 Add at_newversion_notification as [a dependency in your `pubspec.yaml` file.](https://flutter.io/using-packages/)
 ```
 dependencies:
-  at_newversion_notification: ^0.0.1
+  at_newversion_notification: ^0.0.2
 ```
 ## Usage
 * In main.dart (or any) file, first create an instance of the `AtNewVersionNotification` class in your `initState()` method.
