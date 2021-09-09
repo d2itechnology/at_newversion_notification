@@ -10,7 +10,7 @@ The UI of the alert dialog is simply a card.
 
 Screenshots:
 
-![Screenshots](screenshots/both.png)
+<img src="https://raw.githubusercontent.com/d2itechnology/at_newversion_notification/main/screenshots/both.png?token=AUJGZAF442K3FYYPDTXQGY3BHGT5U"/>
 
 ## Installation
 Add at_newversion_notification as [a dependency in your `pubspec.yaml` file.](https://flutter.io/using-packages/)
@@ -19,16 +19,20 @@ dependencies:
   at_newversion_notification: ^0.0.1
 ```
 ## Usage
-* In main.dart file, first create an instance of the `AtNewVersionNotification` class in your `initState()` method.
+* In main.dart (or any) file, first create an instance of the `AtNewVersionNotification` class in your `initState()` method.
 
-   `final AtNewVersionNotification appNewVersionNotific = AtNewVersionNotification();`
+   `final AtNewVersionNotification atNewVersionNotification = AtNewVersionNotification();`
 
-* Then Find your application package name and pass the value in andoidAppId, iOSAppId and
-pass `minimum version` in minimumVersion parameter.
+* Find your application package name and pass the value in `andoidAppId`, `iOSAppId`.
 
-* And calling showAlertDialog method with your app. BuildContext will check if the app is applicable for updates or not. And based on the platform the alert dialog will automatically open then the user can go to the app store.
+* And Pass application minimum version value in `minimumVersion` parameter.
 
-   `atNewVersionNotific.showAlertDialog(context: context);`
+* Call showAlertDialog method-
+  `atNewVersionNotification.showAlertDialog(context: context);`
+
+* Application's `BuildContext` class will check if the app can be updated.
+
+* Based on the platform (Android/iOS) the alert dialog will automatically show. And user can redirect to the app store on the `Update` button click.
 
 ## Example
 ```
@@ -48,17 +52,17 @@ pass `minimum version` in minimumVersion parameter.
    void initState() {
      super.initState();
 
-     final AtNewVersionNotification appNewVersionNotific =
+     final AtNewVersionNotification atNewVersionNotification =
          AtNewVersionNotification(
              iOSAppId: 'com.google.myride',
              androidAppId: 'com.google.rever',
              minimumVersion: '1.0.0');
 
-     showDialog(appNewVersionNotific);
+     showDialog(atNewVersionNotification);
    }
 
-   void showDialog(AtNewVersionNotification appNewVersion) {
-     appNewVersion.showAlertDialog(context: context);
+   void showDialog(AtNewVersionNotification atNewVersion) {
+     atNewVersion.showAlertDialog(context: context);
    }
 
    @override
